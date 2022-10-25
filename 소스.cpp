@@ -9,6 +9,7 @@ using namespace std;
 int solution(int n, int** wires, size_t wires_rows, size_t wires_cols) {
     int* NumberOfLine = (int*)malloc(sizeof(int) * n);
     int* TotalNumberOfWire = (int*)malloc(sizeof(int) * n);
+    int* CheckingList = (int*)malloc(sizeof(int) * wires_rows);
     int* StartNum = (int*)malloc(sizeof(int) * n);
 
     for (int i = 0; i < n; i++)
@@ -18,11 +19,18 @@ int solution(int n, int** wires, size_t wires_rows, size_t wires_cols) {
         StartNum[i] = 0;
     }
     
-    for (int i = 0; i < wires_cols; i++)
+    for (int i = 0; i < wires_rows; i++)
     {
         NumberOfLine[wires[i][0]-1]++;
         NumberOfLine[wires[i][1]-1]++;
+        CheckingList[i] = 0;
     }
+
+    for (int i = 0; i < n; i++)
+    {
+        cout << NumberOfLine[i] << " ";
+    }
+    cout << endl;
 
     for (int LineNum = 1; LineNum < n+1; LineNum++)
     {
@@ -30,11 +38,17 @@ int solution(int n, int** wires, size_t wires_rows, size_t wires_cols) {
         {
             if (NumberOfLine[WireNum] == LineNum)
             {
-                for (int k = 0; k < wires_cols; k++)
+                for (int k = 0; k < wires_rows; k++)
                 {
-                    if (wires[k][1] == WireNum +1)
+                    if (wires[k][1] == WireNum +1 && CheckingList[k] == 0)
                     {
                         TotalNumberOfWire[wires[k][0] - 1] += TotalNumberOfWire[WireNum];
+                        CheckingList[k] = 1;
+                    }
+                    else if (wires[k][0] == WireNum + 1 && CheckingList[k] == 0)
+                    {
+                        TotalNumberOfWire[wires[k][1] - 1] += TotalNumberOfWire[WireNum];
+                        CheckingList[k] = 1;
                     }
                 }
             }
@@ -45,21 +59,41 @@ int solution(int n, int** wires, size_t wires_rows, size_t wires_cols) {
     {
         cout << TotalNumberOfWire[i] << " ";
     }
+    cout << endl;
 
-    int answer = 0;
+    int MinNum = 100;
+    for (int i = 0; i < n; i++)
+    {
+        int diff = n - TotalNumberOfWire[i]*2;
+        if (diff < 0)
+        {
+            diff = -diff;
+        }
+
+        if (diff < MinNum)
+        {
+            MinNum = diff;
+        }
+    }
+
+    int answer = MinNum;
     return answer;
 }
 
+#define ROW 6
+
 int main()
 {
-    int* list[8];
-    int aaa[8][2] = { {1,3},{2,3},{3,4},{4,5},{4,6},{4,7},{7,8}, {7,9} };
-    for (int i = 0; i < 8; i++)
+    int* list[ROW];
+    int aaa[ROW][2] = { {1,2},{2,7},{3,7},{3,4},{4,5},{6,7} };
+    for (int i = 0; i < ROW; i++)
     {
         list[i] = aaa[i];
     }
 
-    solution(9,list,2,8);
+    int a = solution(7,list,ROW,2);
+
+    cout << a;
 
     int j;
     cin >> j;
