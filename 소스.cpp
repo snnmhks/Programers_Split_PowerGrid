@@ -7,60 +7,60 @@ using namespace std;
 
 // wires_rows는 2차원 배열 wires의 행 길이, wires_cols는 2차원 배열 wires의 열 길이입니다.
 int solution(int n, int** wires, size_t wires_rows, size_t wires_cols) {
-    int* NumberOfLine = (int*)malloc(sizeof(int) * wires_cols);
-    int* StartNum = (int*)malloc(sizeof(int) * wires_cols);
-    int StartNumIndex = 0;
+    int* NumberOfLine = (int*)malloc(sizeof(int) * n);
+    int* TotalNumberOfWire = (int*)malloc(sizeof(int) * n);
+    int* StartNum = (int*)malloc(sizeof(int) * n);
 
-    for (int i = 0; i < wires_cols; i++)
+    for (int i = 0; i < n; i++)
     {
         NumberOfLine[i] = 0;
+        TotalNumberOfWire[i] = 1;
         StartNum[i] = 0;
     }
     
-    int index = 0;
     for (int i = 0; i < wires_cols; i++)
     {
-        if (wires[i][0] == index + 1)
-        {
-            index = wires[i][0];
-        }
-        else if (wires[i][0] != index)
-        {
-            for (int j = index + 1; j < wires[i][0]; j++)
-            {
-                StartNum[StartNumIndex] = j;
-                NumberOfLine[j]++;
-                StartNumIndex++;
-            }
-            index = wires[i][0];
-        }
+        NumberOfLine[wires[i][0]-1]++;
+        NumberOfLine[wires[i][1]-1]++;
     }
 
-    int Num = StartNumIndex;
-    while (1)
+    for (int LineNum = 1; LineNum < n+1; LineNum++)
     {
-        StartNumIndex = Num;
-        Num = 0;
-        for (int i = 0; i < StartNumIndex; i++)
+        for (int WireNum = 0; WireNum < n; WireNum++)
         {
-            for (int j = 0; j < wires_cols; j++)
+            if (NumberOfLine[WireNum] == LineNum)
             {
-                if (StartNum[i] == wires[j][1])
+                for (int k = 0; k < wires_cols; k++)
                 {
-                    NumberOfLine[wires[j][0]] += NumberOfLine[StartNum[i]];
-                    StartNum[i] = wires[j][0];
-                    Num++;
-                    break;
+                    if (wires[k][1] == WireNum +1)
+                    {
+                        TotalNumberOfWire[wires[k][0] - 1] += TotalNumberOfWire[WireNum];
+                    }
                 }
             }
         }
-        if (Num == 0)
-        {
-            break;
-        }
     }
 
+    for (int i = 0; i < n; i++)
+    {
+        cout << TotalNumberOfWire[i] << " ";
+    }
 
-    int answer = -1;
+    int answer = 0;
     return answer;
+}
+
+int main()
+{
+    int* list[8];
+    int aaa[8][2] = { {1,3},{2,3},{3,4},{4,5},{4,6},{4,7},{7,8}, {7,9} };
+    for (int i = 0; i < 8; i++)
+    {
+        list[i] = aaa[i];
+    }
+
+    solution(9,list,2,8);
+
+    int j;
+    cin >> j;
 }
